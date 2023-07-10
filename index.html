@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stats</title>
+    <style type="text/css">
+        #progress {
+            background-color: black;
+            color: white;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            font-family: monospace;
+            width: 100%;
+            height: 70vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Basic Stats</h1>
+
+    <div id="progress"></div>
+
+    <script type="text/javascript">
+        const interval = 1000;
+        const progress = document.getElementById('progress');
+        let timeout;
+
+        function updateProgress() {
+            fetch('/progress.txt')
+                .then(response => response.text())
+                .then(text => progress.textContent = text)
+                .then(() => {
+                    // scroll to bottom of #progress
+                    progress.scrollTop = progress.scrollHeight;
+
+                    if (timeout) clearTimeout(timeout);
+                    timeout = setTimeout(updateProgress, interval);
+                })
+                .catch(error => {
+                    console.error(error);
+                    if (timeout) clearTimeout(timeout);
+                    timeout = setTimeout(updateProgress, interval);
+                });
+        }
+        updateProgress();
+    </script>
+</body>
+
+</html>
